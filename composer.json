@@ -1,0 +1,15 @@
+{
+    "name": "tu/nombre-de-proyecto",
+    "description": "Descripción de tu proyecto",
+    "authors": [
+        {
+            "name": "Tu Nombre",
+            "email": "tu@email.com"
+        }
+    ],
+    "require": {
+        "phpoffice/phpspreadsheet": "^1.29",
+        "box/spout": "^3.3"
+    },
+    "type": "library"
+}
