@@ -224,7 +224,7 @@
                         <input type="text" name="nombre_grupo" class="form-control" id="nombre_grupo" placeholder="Ingrese el nombre del grupo">
                     </div>
     
-                    <button type="submit" class="btn btn-primary">Enviar</button>
+                    <button type="submit" class="btn btn-warning">Enviar</button>
                 </div>
             </form>
             
@@ -358,7 +358,7 @@
                           <input type="file" name="imagen" class="form-control-file" id="imagen">
                       </div>
         
-                      <button type="submit" class="btn btn-primary">Enviar</button>
+                      <button type="submit" class="btn btn-warning">Enviar</button>
                
               </form>
               </div>
@@ -442,14 +442,14 @@
                   <input type="hidden" name="idserv" class="form-control" value="' . $row["idserv"] . '" id="idserv">
                   <input type="hidden" name="grupo_id" class="form-control" value="' . $grupoRow["grupo_id"] . '" id="grupo_id">
                   <input type="text"  name="precio" class="form-control" value="' . $precioRow["precio"] . '" id="precio">
-                  <button type="submit" class="btn btn-primary">enviar</button>
+                  <button type="submit" class="btn btn-warning">enviar</button>
               </form>'; // Imprime el precio obtenido
               } else {
                 echo '<form action="../../../php/crear-agregarprecio.php" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="idserv" class="form-control" value="' . $row["idserv"] . '" id="idserv">
                 <input type="hidden" name="grupo_id" class="form-control" value="' . $grupoRow["grupo_id"] . '" id="grupo_id">
                 <input type="text" name="precio" class="form-control"  id="precio">
-                <button type="submit" class="btn btn-primary">Enviar</button>
+                <button type="submit" class="btn btn-warning">Enviar</button>
             </form>'; // Si no hay coincidencias, imprime "N/A"
               }
               echo '</td>'; // Cierra la celda

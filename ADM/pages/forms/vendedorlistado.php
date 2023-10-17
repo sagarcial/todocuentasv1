@@ -250,7 +250,7 @@
             echo '<td>' . $grupoRow["saldo"] . '</td>';
             echo '<td><form action="editarvendedor.php" method="post" enctype="multipart/form-data">
             <input type="hidden" name="idvendedor" class="form-control" value="' . $grupoRow["id"] . '" id="idvendedor">
-            <button type="submit" class="btn btn-block btn-info">Editar</button>
+            <button type="submit" class="btn btn-block btn-warning">Editar</button>
         </form></td>';
             echo '<td><form action="../../../php/eliminarvendedores.php" method="post" enctype="multipart/form-data">
             <input type="hidden" name="idvendedor" class="form-control" value="' . $grupoRow["id"] . '" id="idvendedor">

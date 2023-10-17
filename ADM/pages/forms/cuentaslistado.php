@@ -270,7 +270,7 @@ $diferenciaDias = $diferenciaSegundos / (60 * 60 * 24); // Diferencia en días
             echo '<td>' . $diferenciaDias . '</td>';
             echo '<td><form action="editar_cuentas.php" method="post" enctype="multipart/form-data">
             <input type="hidden" name="idcuentas" class="form-control" value="' . $grupoRow["idcuentas"] . '" id="idcuentas">
-            <button type="submit" class="btn btn-block btn-info">Editar</button>
+            <button type="submit" class="btn btn-block btn-warning">Editar</button>
         </form></td>';
             echo '<td><form action="../../../php/eliminarcuentas.php" method="post" enctype="multipart/form-data">
             <input type="hidden" name="idcuentas" class="form-control" value="' . $grupoRow["idcuentas"] . '" id="idcuentas">

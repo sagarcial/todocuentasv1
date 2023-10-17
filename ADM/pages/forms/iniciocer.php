@@ -157,20 +157,7 @@
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1>Agregar Cuentas</h1>
-          </div>
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
-            </ol>
-          </div>
-        </div>
-      </div><!-- /.container-fluid -->
-    </section>
+ 
 
     <!-- Main content -->
     <section class="content">
@@ -179,67 +166,13 @@
           <!-- left column -->
           <div class="col-md-12">
             <!-- jquery validation -->
-            <div class="card card-warning">
-              <div class="card-header">
-                <h3 class="card-title">Importar Cuentas </h3>
-              </div>
+            <div class="card card">
+             
               <!-- /.card-header -->
               <!-- form start -->
-              <form action="../../../php/crearcuentas.php" method="post" enctype="multipart/form-data">
-    <div class="card-body">
-        <div class="form-group">
-            <label for="nombre">Importar Cuentas</label>
-            <input type="file" class="form-control" name="archivo_excel" accept=".xls,.xlsx">
-        </div>
-        <div class="form-group">
-                <label for="idserv">Plataforma</label>
-                <select name="idserv" class="form-control" id="idserv" required>
-                <?php
-// Incluir el archivo de credenciales
-include '../../../php/credenciales.php';
-
-// Crear una conexión a la base de datos
-$conexion = mysqli_connect($servername, $username, $password, $dbname);
-
-// Verificar la conexión
-if (!$conexion) {
-    die("Error de conexión: " . mysqli_connect_error());
-}
-
-// Consultar las plataformas desde la tabla servicios
-$query = "SELECT plataforma,idserv,Tiposerv FROM servicios";
-$result = mysqli_query($conexion, $query);
-
-if ($result) {
-    // Imprimir las plataformas como opciones de selección
-    while ($row = mysqli_fetch_assoc($result)) {
-        echo "<option value='" . $row['idserv'] . "'>" . $row['plataforma'] ." ". trim(str_replace('_', ' ', $row["Tiposerv"])) .  "</option>";
-    }
-} else {
-    echo "Error al consultar las plataformas: " . mysqli_error($conexion);
-}
-
-
-?>
-
-                </select>
-                <div class="form-group">
-                <label for="tiposerv">Tipo de cuenta </label>
-                <select name="tiposerv" class="form-control" id="tiposerv" required>
-    <option value="completa">Cuenta Completa</option>
-    <option value="individual">Pantalla </option>
-
-                </select>
-                </div>
-            </div>
-        </div>
-    <!-- /.card-body -->
-
-    <div class="card-footer">
-        <button type="submit" class="btn btn-warning">Enviar</button>
+              <div class="contenedor">
+        <!-- El contenido de tu contenedor va aquí -->
     </div>
-</form>
-
         </div>
         </div>
         <div class="container-fluid">
@@ -247,70 +180,74 @@ if ($result) {
           <!-- left column -->
           <div class="col-md-12">
             <!-- jquery validation -->
-            <div class="card card-warning">
-              <div class="card-header">
-                <h3 class="card-title">Agregar Cuentas </h3>
-              </div>
+            <div class="card card">
+             
               <!-- /.card-header -->
               <!-- form start -->
-              <form action="../../../php/crearcuentasindividual.php" method="post">
-    <div class="card-body">
-        <div class="form-group">
-            <label for="cuenta">Cuenta</label>
-            <input type="text" name="cuenta" class="form-control" id="cuenta" required placeholder="Ingrese la cuenta">
-        </div>
-        <div class="form-group">
-            <label for="contrasena">Contraseña</label>
-            <input type="password" name="contrasena" class="form-control" id="contrasena" required placeholder="Ingrese la contraseña">
-        </div>
-        <div class="form-group">
-                <label for="plataforma">Plataforma</label>
-                <select name="plataforma" class="form-control" id="plataforma" required>
-                <?php
-date_default_timezone_set('America/Bogota');
-$fecha = date('Y-m-d');
+              <style>
+  @media (max-width: 768px) {
+    table {
+      display: block;
+    }
+    td {
+      display: inline-block;
+      width: 50%;
+      float: left;
+    }
+  }
+</style>
 
-$result = mysqli_query($conexion, $query);
+<?php
+// Supongamos que tienes un array de rutas de imágenes de la base de datos
+include '../../../php/credenciales.php';
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+    die("Conexión fallida: " . $conn->connect_error);
+}
+// Realiza la consulta SQL para obtener las rutas de las imágenes
+$sql = "SELECT imagen FROM servicios";
+$result = $conn->query($sql);
 
-if ($result) {
-    // Imprimir las plataformas como opciones de selección
-    while ($row = mysqli_fetch_assoc($result)) {
-      echo "<option value='" . $row['idserv'] . "'>" . $row['plataforma'] ." ". trim(str_replace('_', ' ', $row["Tiposerv"])) .  "</option>";
+$imagenes = array();
+
+if ($result->num_rows > 0) {
+    // Recorre los resultados y agrega las rutas al arreglo
+    while ($row = $result->fetch_assoc()) {
+        $imagenes[] = $row["imagen"];
     }
 } else {
-    echo "Error al consultar las plataformas: " . mysqli_error($conexion);
+    echo "No se encontraron registros en la tabla servicios.";
 }
 
-// Cerrar la conexión a la base de datos
-mysqli_close($conexion);
+// Cierra la conexión a la base de datos
+$conn->close();
+
+// Ahora $imagenes contiene las rutas de las imágenes
+
+echo '<table>';
+$contador = 0;
+
+foreach ($imagenes as $imagen) {
+    if ($contador % 10 == 0) {
+        echo '<tr>';
+    }
+
+    echo '<td><a href="' . $imagen . '"><img src="../../../php/' . $imagen . '" width="100%"></a></td>';
+
+    $contador++;
+
+    if ($contador % 10 == 0) {
+        echo '</tr>';
+    }
+}
+
+// Asegurémonos de cerrar la última fila si no estaba completa
+if ($contador % 10 != 0) {
+    echo '</tr>';
+}
+
+echo '</table>';
 ?>
-
-                </select>
-            </div>
-            <div class="form-group">
-            <label for="contrasena">Pantalla</label>
-            <input type="text" name="pantalla" class="form-control" value="N/A" id="pantalla" required placeholder="Ingrese el nombre de la pantalla">
-        </div>
-        <div class="form-group">
-            <label for="pin">PIN</label>
-            <input type="text" name="pin" class="form-control"  value="N/A"  required id="pin" placeholder="Ingrese el PIN">
-        </div>
-        <div class="form-group">
-        <label for="duracion">Duracion</label>
-        <input type="text" name="duracion" class="form-control" id="duracion" required placeholder="Ingrese la duracion" >
-        </div>
-        <div class="form-group">
-            <input type="hidden" name="estado" class="form-control" id="estado" placeholder="Ingrese el estado" value="activo">
-            <input type="hidden" name="fecha" class="form-control" id="fecha" placeholder="Ingrese el estado" value="<?php echo $fecha; ?>">
-
-        </div>
-    </div>
-    <!-- /.card-body -->
-
-    <div class="card-footer">
-        <button type="submit" class="btn btn-warning">Enviar</button>
-    </div>
-</form>
 
             
             </div>

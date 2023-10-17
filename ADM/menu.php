@@ -1,4 +1,6 @@
-
+<head>
+<link rel="stylesheet" href="../../dist/css/csspersn.css">
+</head>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="../../index2.html"  class="h1">

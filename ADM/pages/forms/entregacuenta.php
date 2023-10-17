@@ -1,9 +1,25 @@
+<?php
+    // Cambiar la configuración regional a español
+    setlocale(LC_TIME, 'es_ES.UTF-8');
+
+    // Establecer la zona horaria a Bogotá
+    date_default_timezone_set('America/Bogota');
+
+    // Obtener la fecha y hora actual en español
+    $fecha_actual = strftime('%d/%m/%Y');
+    $hora_actual = date('H:i:s');
+
+    // Restaurar la configuración regional y la zona horaria originales
+    setlocale(LC_TIME, '');
+    date_default_timezone_set('UTC');
+    ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | Validation Form</title>
+  <title>AdminLTE 3 | Invoice</title>
+
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
@@ -151,8 +167,8 @@
   </nav>
   <!-- /.navbar -->
 
+  <!-- Main Sidebar Container -->
   <?php include '../../menu.php'; ?>
-
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -161,175 +177,125 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Agregar Cuentas</h1>
+       
           </div>
           <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
-            </ol>
+          
           </div>
         </div>
       </div><!-- /.container-fluid -->
     </section>
 
-    <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
         <div class="row">
-          <!-- left column -->
-          <div class="col-md-12">
-            <!-- jquery validation -->
-            <div class="card card-warning">
-              <div class="card-header">
-                <h3 class="card-title">Importar Cuentas </h3>
-              </div>
-              <!-- /.card-header -->
-              <!-- form start -->
-              <form action="../../../php/crearcuentas.php" method="post" enctype="multipart/form-data">
-    <div class="card-body">
-        <div class="form-group">
-            <label for="nombre">Importar Cuentas</label>
-            <input type="file" class="form-control" name="archivo_excel" accept=".xls,.xlsx">
-        </div>
-        <div class="form-group">
-                <label for="idserv">Plataforma</label>
-                <select name="idserv" class="form-control" id="idserv" required>
-                <?php
-// Incluir el archivo de credenciales
-include '../../../php/credenciales.php';
-
-// Crear una conexión a la base de datos
-$conexion = mysqli_connect($servername, $username, $password, $dbname);
-
-// Verificar la conexión
-if (!$conexion) {
-    die("Error de conexión: " . mysqli_connect_error());
-}
-
-// Consultar las plataformas desde la tabla servicios
-$query = "SELECT plataforma,idserv,Tiposerv FROM servicios";
-$result = mysqli_query($conexion, $query);
-
-if ($result) {
-    // Imprimir las plataformas como opciones de selección
-    while ($row = mysqli_fetch_assoc($result)) {
-        echo "<option value='" . $row['idserv'] . "'>" . $row['plataforma'] ." ". trim(str_replace('_', ' ', $row["Tiposerv"])) .  "</option>";
-    }
-} else {
-    echo "Error al consultar las plataformas: " . mysqli_error($conexion);
-}
-
-
-?>
-
-                </select>
-                <div class="form-group">
-                <label for="tiposerv">Tipo de cuenta </label>
-                <select name="tiposerv" class="form-control" id="tiposerv" required>
-    <option value="completa">Cuenta Completa</option>
-    <option value="individual">Pantalla </option>
-
-                </select>
+          <div class="col-12">
+           
+            <!-- Main content -->
+            <div class="invoice p-3 mb-3">
+              <!-- title row -->
+              <div class="row">
+                <div class="col-12">
+                  <h4>
+                    <i class="fas fa-globe"></i> CUENTAS
+                    <small class="float-right">Fecha: <?php echo $fecha_actual; ?></small>
+                  </h4>
                 </div>
-            </div>
-        </div>
-    <!-- /.card-body -->
-
-    <div class="card-footer">
-        <button type="submit" class="btn btn-warning">Enviar</button>
-    </div>
-</form>
-
-        </div>
-        </div>
-        <div class="container-fluid">
-        <div class="row">
-          <!-- left column -->
-          <div class="col-md-12">
-            <!-- jquery validation -->
-            <div class="card card-warning">
-              <div class="card-header">
-                <h3 class="card-title">Agregar Cuentas </h3>
+                <!-- /.col -->
               </div>
-              <!-- /.card-header -->
-              <!-- form start -->
-              <form action="../../../php/crearcuentasindividual.php" method="post">
-    <div class="card-body">
-        <div class="form-group">
-            <label for="cuenta">Cuenta</label>
-            <input type="text" name="cuenta" class="form-control" id="cuenta" required placeholder="Ingrese la cuenta">
-        </div>
-        <div class="form-group">
-            <label for="contrasena">Contraseña</label>
-            <input type="password" name="contrasena" class="form-control" id="contrasena" required placeholder="Ingrese la contraseña">
-        </div>
-        <div class="form-group">
-                <label for="plataforma">Plataforma</label>
-                <select name="plataforma" class="form-control" id="plataforma" required>
-                <?php
-date_default_timezone_set('America/Bogota');
-$fecha = date('Y-m-d');
+              <!-- info row -->
+             
+              <!-- /.row -->
 
-$result = mysqli_query($conexion, $query);
+              <!-- Table row -->
+              <div class="row">
+                <div class="col-12 table-responsive">
+                <form action="../../../php/creargrupo.php" id="formcuenta" method="post">
+                <div class="card-body">
+<div class="row">
+<div class="col-4">
+<input type="text" class="form-control" id="cuenta" name="cuenta" placeholder="cuenta" value="ernanpereayasociados@gmail.com" disabled>
+</div>
+<div class="col-3">
+<input type="text" class="form-control" id="contrasena" name="contrasena" placeholder="contrasena" value="ernanpereayasociados" disabled>
+</div>
+<div class="col-3">
+<input type="text" class="form-control" id="pantalla" name="pantalla" placeholder="pantalla" value="ernancolos" disabled>
+</div>
+<div class="col-1">
+<input type="text" class="form-control" id="pin" name="pin" placeholder="pin" value="1234" disabled>
+</div>
+<div class="col-1">
+<input type="text" class="form-control" id="duracion" name="duracion" placeholder="duracion" value="30" disabled>
+</div>
+</div>
+</div>
+ 
+                </div>
+                <!-- /.col -->
+              </div>
+              <!-- /.row -->
 
-if ($result) {
-    // Imprimir las plataformas como opciones de selección
-    while ($row = mysqli_fetch_assoc($result)) {
-      echo "<option value='" . $row['idserv'] . "'>" . $row['plataforma'] ." ". trim(str_replace('_', ' ', $row["Tiposerv"])) .  "</option>";
-    }
-} else {
-    echo "Error al consultar las plataformas: " . mysqli_error($conexion);
-}
+              <div class="row">
+                <!-- accepted payments column -->
+                <div class="col-6">
+                  <p class="lead">Instrucciones generales:</p>
+                  <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
+                  El uso adecuado de este perfil ayuda a que todos los usuarios puedan disfrutar sin contratiempos, ayúdanos usando solo un dispositivo para garantizar un buen servicio para todos.
+                  </p>
+                  <div id="valoresCopiados"></div>
 
-// Cerrar la conexión a la base de datos
-mysqli_close($conexion);
-?>
+                </div>
+                <!-- /.col -->
+                <div class="col-6">
+                  <p class="lead">Cuenta:</p>
+                  <div class="table-responsive">
+                    <table class="table">
+                    <th>Cantidad:</th>
+                    <td><input type="number" class="form-control" id="cantidad" name="cantidad" placeholder="1" required ></td> 
+                    </table>
+                    </div>
+                  <div class="table-responsive">
+                    <table class="table">
+                    <th>Numero de Telefono:</th>
+                    <td><input type="text" class="form-control" id="telefono" name="telefono" placeholder="telefono" required ></td>
+                    </table>
+                    </div>
+                    
+                  <div class="table-responsive">
+                    <table class="table">
+                        <th>Total:</th>
+                        <td>$265.24</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+                <!-- /.col -->
+              </div>
+              <!-- /.row -->
 
-                </select>
+              <!-- this row will not appear when printing -->
+              <div class="row no-print">
+                <div class="col-12">
+                  <a href="invoice-print.html" rel="noopener" target="_blank" class="btn btn-default"><i class="fa fa-shopping-cart"></i> Comprar Ahora</a>
+                  <button type="button" id="whatsappButton" class="btn btn-success float-right"><i class="fa fa-comment"></i> Enviar a WhatsApp
+                  </button>
+                  <button type="button" class="btn btn-primary float-right" id="copyButton" style="margin-right: 5px;">
+                    <i class="fas fa-download"></i> Copiar Valores
+                  </button>
+                </div>
+              </div>
+              </form>
             </div>
-            <div class="form-group">
-            <label for="contrasena">Pantalla</label>
-            <input type="text" name="pantalla" class="form-control" value="N/A" id="pantalla" required placeholder="Ingrese el nombre de la pantalla">
-        </div>
-        <div class="form-group">
-            <label for="pin">PIN</label>
-            <input type="text" name="pin" class="form-control"  value="N/A"  required id="pin" placeholder="Ingrese el PIN">
-        </div>
-        <div class="form-group">
-        <label for="duracion">Duracion</label>
-        <input type="text" name="duracion" class="form-control" id="duracion" required placeholder="Ingrese la duracion" >
-        </div>
-        <div class="form-group">
-            <input type="hidden" name="estado" class="form-control" id="estado" placeholder="Ingrese el estado" value="activo">
-            <input type="hidden" name="fecha" class="form-control" id="fecha" placeholder="Ingrese el estado" value="<?php echo $fecha; ?>">
-
-        </div>
-    </div>
-    <!-- /.card-body -->
-
-    <div class="card-footer">
-        <button type="submit" class="btn btn-warning">Enviar</button>
-    </div>
-</form>
-
-            
-            </div>
-            <!-- /.card -->
-            </div>
-          <!--/.col (left) -->
-          <!-- right column -->
-          <div class="col-md-6">
-
-          </div>
-          <!--/.col (right) -->
-        </div>
-        <!-- /.row -->
+            <!-- /.invoice -->
+          </div><!-- /.col -->
+        </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-  <footer class="main-footer">
+  <footer class="main-footer no-print">
     <div class="float-right d-none d-sm-block">
       <b>Version</b> 3.2.0
     </div>
@@ -343,64 +309,73 @@ mysqli_close($conexion);
   <!-- /.control-sidebar -->
 </div>
 <!-- ./wrapper -->
+<script>
+document.getElementById("copyButton").addEventListener("click", function() {
+  // Get all the form elements
+  var cuenta = document.getElementById("cuenta").value;
+  var contrasena = document.getElementById("contrasena").value;
+  var pantalla = document.getElementById("pantalla").value;
+  var pin = document.getElementById("pin").value;
+  var duracion = document.getElementById("duracion").value;
 
+  // Create a structured message with the form data
+  var formattedMessage = "Cuenta: " + cuenta + "\n" +
+                         "Contraseña: " + contrasena + "\n" +
+                         "Pantalla: " + pantalla + "\n" +
+                         "Pin: " + pin + "\n" +
+                         "Duración: " + duracion;
+
+  // Create a temporary textarea element to copy the data to the clipboard
+  var tempTextArea = document.createElement("textarea");
+  tempTextArea.value = formattedMessage;
+  document.body.appendChild(tempTextArea);
+
+  // Select the text in the textarea and copy it to the clipboard
+  tempTextArea.select();
+  document.execCommand("copy");
+
+  // Remove the temporary textarea
+  document.body.removeChild(tempTextArea);
+
+  alert("Informacion copiada en el portapapeles!");
+});
+
+document.getElementById("whatsappButton").addEventListener("click", function() {
+  // Get the copied data from the clipboard
+  var clipboardData = document.createElement("textarea");
+  document.body.appendChild(clipboardData);
+  clipboardData.value = document.getElementById("cuenta").value + " " +
+                      document.getElementById("contrasena").value + " " +
+                      document.getElementById("pantalla").value + " " +
+                      document.getElementById("pin").value + " " +
+                      document.getElementById("duracion").value;
+  clipboardData.select();
+  document.execCommand("copy");
+  document.body.removeChild(clipboardData);
+
+  var phoneNumber = document.getElementById("telefono").value;
+
+
+  // Create the WhatsApp link with the formatted message
+  var whatsappMessage = "Cuenta: " + document.getElementById("cuenta").value + " " +
+                       "Contraseña: " + document.getElementById("contrasena").value + " " +
+                       "Pantalla: " + document.getElementById("pantalla").value + " " +
+                       "Pin: " + document.getElementById("pin").value + " " +
+                       "Duración: " + document.getElementById("duracion").value;
+
+  var whatsappLink = "https://wa.me/+57" + phoneNumber + "/?text=" + encodeURIComponent(whatsappMessage);
+
+  // Redirect to the WhatsApp link
+  window.location.href = whatsappLink;
+});
+</script>
 <!-- jQuery -->
 <script src="../../plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
 <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- jquery-validation -->
-<script src="../../plugins/jquery-validation/jquery.validate.min.js"></script>
-<script src="../../plugins/jquery-validation/additional-methods.min.js"></script>
 <!-- AdminLTE App -->
 <script src="../../dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="../../dist/js/demo.js"></script>
-<!-- Page specific script -->
-<script>
-$(function () {
-  $.validator.setDefaults({
-    submitHandler: function () {
-      alert( "Form successful submitted!" );
-    }
-  });
-  $('#quickForm').validate({
-    rules: {
-      email: {
-        required: true,
-        email: true,
-      },
-      password: {
-        required: true,
-        minlength: 5
-      },
-      terms: {
-        required: true
-      },
-    },
-    messages: {
-      email: {
-        required: "Please enter a email address",
-        email: "Please enter a valid email address"
-      },
-      password: {
-        required: "Please provide a password",
-        minlength: "Your password must be at least 5 characters long"
-      },
-      terms: "Please accept our terms"
-    },
-    errorElement: 'span',
-    errorPlacement: function (error, element) {
-      error.addClass('invalid-feedback');
-      element.closest('.form-group').append(error);
-    },
-    highlight: function (element, errorClass, validClass) {
-      $(element).addClass('is-invalid');
-    },
-    unhighlight: function (element, errorClass, validClass) {
-      $(element).removeClass('is-invalid');
-    }
-  });
-});
-</script>
 </body>
 </html>
