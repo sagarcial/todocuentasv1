@@ -1,4 +1,13 @@
 <?php
+session_start(); // Iniciar sesión
+
+if (session_status() == PHP_SESSION_ACTIVE && isset($_SESSION["usuario"])) {
+  // La sesión está activa y la variable de sesión "usuario" está definida, por lo que se permite el acceso a la página
+} else {
+  // La sesión no está activa o la variable de sesión "usuario" no está definida, por lo que se redirige a la página de inicio de sesión
+  echo "<script>alert('Sesion expirada'); window.history.back();</script>";
+  exit();
+}
     // Cambiar la configuración regional a español
     setlocale(LC_TIME, 'es_ES.UTF-8');
 
@@ -12,6 +21,54 @@
     // Restaurar la configuración regional y la zona horaria originales
     setlocale(LC_TIME, '');
     date_default_timezone_set('UTC');
+
+
+    // Incluye el archivo de credenciales
+require '../../../php/credenciales.php';
+
+// Recupera el ID del enlace
+if (isset($_GET['id'])) {
+  $id = $_GET['id'];
+ $idgrupo=2;
+  // Conecta a la base de datos
+  $conn = new mysqli($servername, $username, $password, $dbname);
+
+  // Verifica la conexión
+  if ($conn->connect_error) {
+      die("Error de conexión a la base de datos: " . $conn->connect_error);
+  }
+
+  // Consulta la base de datos para obtener datos de la tabla servicios
+  $sql = "SELECT * FROM servicios WHERE idserv = $id";
+  $resultado = $conn->query($sql);
+  
+  if ($resultado->num_rows > 0) {
+      // Muestra los datos
+      $fila = $resultado->fetch_assoc();
+          // Agrega más columnas según sea necesario
+      } else {
+        header('Location: iniciocer.php');
+      echo "No se encontraron registros para el ID proporcionado.";
+  }
+    // Consulta adicional en la tabla preciosdiferenciales
+    $sql2 = "SELECT * FROM preciosdiferenciales WHERE idserv = $id AND grupo_id = $idgrupo";
+    $resultado2 = $conn->query($sql2);
+
+    if ($resultado2->num_rows > 0) {
+        // Maneja los resultados de la segunda consulta
+        $fila2 = $resultado2->fetch_assoc();
+            // Hacer algo con los datos de la tabla preciosdiferenciales
+      
+    } else {
+      header('Location: iniciocer.php');
+        // No se encontraron registros en preciosdiferenciales para el ID proporcionado.
+    }
+  // Cierra la conexión a la base de datos
+  $conn->close();
+} else {
+  echo "ID no proporcionado en el enlace.";
+}
+
     ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -197,7 +254,7 @@
               <div class="row">
                 <div class="col-12">
                   <h4>
-                    <i class="fas fa-globe"></i> CUENTAS
+                    <i class="fas fa-globe"></i> CUENTAS  
                     <small class="float-right">Fecha: <?php echo $fecha_actual; ?></small>
                   </h4>
                 </div>
@@ -214,19 +271,22 @@
                 <div class="card-body">
 <div class="row">
 <div class="col-4">
-<input type="text" class="form-control" id="cuenta" name="cuenta" placeholder="cuenta" value="ernanpereayasociados@gmail.com" disabled>
+    <input type="text" class="form-control" id="cuenta" name="cuenta" placeholder="cuenta" value="" disabled>
 </div>
 <div class="col-3">
-<input type="text" class="form-control" id="contrasena" name="contrasena" placeholder="contrasena" value="ernanpereayasociados" disabled>
+    <input type="text" class="form-control" id="contrasena" name="contrasena" placeholder="contrasena" value="" disabled>
 </div>
 <div class="col-3">
-<input type="text" class="form-control" id="pantalla" name="pantalla" placeholder="pantalla" value="ernancolos" disabled>
+    <input type="text" class="form-control" id="pantalla" name="pantalla" placeholder="pantalla" value="" disabled>
 </div>
 <div class="col-1">
-<input type="text" class="form-control" id="pin" name="pin" placeholder="pin" value="1234" disabled>
+    <input type="text" class="form-control" id="pin" name="pin" placeholder="pin" value="" disabled>
 </div>
 <div class="col-1">
-<input type="text" class="form-control" id="duracion" name="duracion" placeholder="duracion" value="30" disabled>
+    <input type="text" class="form-control" id="duracion" name="duracion" placeholder="duracion" value="" disabled>
+</div>
+<div class="col-1">
+    <input type="text" class="form-control" id="idserv" name="idserv" placeholder="idserv" value="<?php echo $id; ?>" hidden>
 </div>
 </div>
 </div>
@@ -248,24 +308,19 @@
                 </div>
                 <!-- /.col -->
                 <div class="col-6">
-                  <p class="lead">Cuenta:</p>
-                  <div class="table-responsive">
-                    <table class="table">
-                    <th>Cantidad:</th>
-                    <td><input type="number" class="form-control" id="cantidad" name="cantidad" placeholder="1" required ></td> 
-                    </table>
-                    </div>
+                  <p class="lead">Cuenta: <?php  echo "" .  $fila['Plataforma'] . " (". $fila['Tiposerv'] .") "; ?></p>
                   <div class="table-responsive">
                     <table class="table">
                     <th>Numero de Telefono:</th>
                     <td><input type="text" class="form-control" id="telefono" name="telefono" placeholder="telefono" required ></td>
                     </table>
                     </div>
-                    
                   <div class="table-responsive">
                     <table class="table">
+                    <th>Precio Unidad:</th>
+                    <td><?php  echo " $" .  $fila2['precio']; ?></td>
                         <th>Total:</th>
-                        <td>$265.24</td>
+                        <td>$<span id="total">0</span></td>
                       </tr>
                     </table>
                   </div>
@@ -277,7 +332,10 @@
               <!-- this row will not appear when printing -->
               <div class="row no-print">
                 <div class="col-12">
-                  <a href="invoice-print.html" rel="noopener" target="_blank" class="btn btn-default"><i class="fa fa-shopping-cart"></i> Comprar Ahora</a>
+                <button type="button" id="comprar"  class="btn btn-default"><i class="fa fa-shopping-cart"></i> Comprar Ahora
+                  </button>
+                  <a href="iniciocer.php"  class="btn btn-warning"><i class="fa fa-arrow-left"></i> Regresar</a>
+                  </button>
                   <button type="button" id="whatsappButton" class="btn btn-success float-right"><i class="fa fa-comment"></i> Enviar a WhatsApp
                   </button>
                   <button type="button" class="btn btn-primary float-right" id="copyButton" style="margin-right: 5px;">
@@ -369,6 +427,42 @@ document.getElementById("whatsappButton").addEventListener("click", function() {
   window.location.href = whatsappLink;
 });
 </script>
+<script>
+var total = 0; // Inicializa la variable total
+
+document.getElementById('comprar').addEventListener('click', function() {
+    var id = document.getElementById('idserv').value;
+    var precio = <?php echo json_encode($fila2['precio']); ?>; // Obtén el valor de $fila2['precio'] en JavaScript
+    // Realizar una solicitud AJAX para obtener los datos desde el servidor
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'obtener_datos.php?id=' + id + '&precio=' + precio, true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var datos = JSON.parse(xhr.responseText);
+            if (datos) {
+                document.getElementById('cuenta').value = datos.cuenta;
+                document.getElementById('contrasena').value = datos.contrasena;
+                document.getElementById('pantalla').value = datos.pantalla;
+                document.getElementById('pin').value = datos.pin;
+                document.getElementById('duracion').value = datos.duracion;
+
+                // Verificar si cuenta es "agotado"
+                if (datos.cuenta === "agotado" || datos.cuenta === "saldo insuficiente") {
+                   
+                } else {
+                    // Suma el valor de precio al total
+                    total += parseFloat(precio);
+                }
+
+                // Actualiza el valor en el elemento HTML
+                document.getElementById('total').textContent = total;
+            }
+        }
+    };
+    xhr.send();
+});
+</script>
+
 <!-- jQuery -->
 <script src="../../plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->

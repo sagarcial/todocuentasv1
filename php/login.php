@@ -1,5 +1,4 @@
 <?php
-session_start(); // Iniciar sesión
 
 include 'credenciales.php';
 
@@ -28,7 +27,11 @@ if (isset($_POST["usuario"]) && isset($_POST["contrasena"])) {
         // Verificar si la contraseña ingresada coincide con el hash MD5 en la base de datos
         if (md5($contrasena) == $fila["contrasena"]) {
             // Almacenar el nombre de usuario y el tipo de usuario en sesiones
+            session_start();
+            $_SESSION["id"] = $fila["id"];
             $_SESSION["usuario"] = $fila["usuario"];
+            $_SESSION["nombre"] = $fila["nombre"];
+            $_SESSION["apellido"] = $fila["apellido"];
             $_SESSION["tipo"] = $fila["tipousuario"];
 
             if ($fila["tipousuario"] == "admin") {
@@ -37,7 +40,7 @@ if (isset($_POST["usuario"]) && isset($_POST["contrasena"])) {
                 exit();
             } else {
                 // Si el tipo de usuario es diferente, redirigir a la página de vendedor
-                header("Location: ../Vendedor/index.php");
+                header("Location: ../ADM/pages/forms/iniciocer.php");
                 exit();
             }
         } else {

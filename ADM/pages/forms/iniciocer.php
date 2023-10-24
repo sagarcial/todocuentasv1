@@ -1,3 +1,27 @@
+<?php
+session_start(); // Iniciar sesión
+
+if (session_status() == PHP_SESSION_ACTIVE && isset($_SESSION["usuario"])) {
+  // La sesión está activa y la variable de sesión "usuario" está definida, por lo que se permite el acceso a la página
+} else {
+  // La sesión no está activa o la variable de sesión "usuario" no está definida, por lo que se redirige a la página de inicio de sesión
+  echo "<script>alert('Sesion expirada'); window.history.back();</script>";
+  exit();
+}
+    // Cambiar la configuración regional a español
+    setlocale(LC_TIME, 'es_ES.UTF-8');
+
+    // Establecer la zona horaria a Bogotá
+    date_default_timezone_set('America/Bogota');
+
+    // Obtener la fecha y hora actual en español
+    $fecha_actual = strftime('%d de %B de %Y');
+    $hora_actual = date('H:i:s');
+
+    // Restaurar la configuración regional y la zona horaria originales
+    setlocale(LC_TIME, '');
+    date_default_timezone_set('UTC');
+    ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -205,15 +229,17 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 // Realiza la consulta SQL para obtener las rutas de las imágenes
-$sql = "SELECT imagen FROM servicios";
+$sql = "SELECT imagen, idserv FROM servicios";
 $result = $conn->query($sql);
 
 $imagenes = array();
+$Servicio = array(); // Debes inicializar este arreglo también
 
 if ($result->num_rows > 0) {
     // Recorre los resultados y agrega las rutas al arreglo
     while ($row = $result->fetch_assoc()) {
         $imagenes[] = $row["imagen"];
+        $Servicio[] = $row["idserv"];
     }
 } else {
     echo "No se encontraron registros en la tabla servicios.";
@@ -227,12 +253,12 @@ $conn->close();
 echo '<table>';
 $contador = 0;
 
-foreach ($imagenes as $imagen) {
+foreach ($imagenes as $key => $imagen) {
     if ($contador % 10 == 0) {
         echo '<tr>';
     }
 
-    echo '<td><a href="' . $imagen . '"><img src="../../../php/' . $imagen . '" width="100%"></a></td>';
+    echo '<td><a href="entregacuenta.php?id='. $Servicio[$key] .'"><img src="../../../php/' . $imagen . '" width="100%"></a></td>';
 
     $contador++;
 
@@ -280,7 +306,30 @@ echo '</table>';
   <!-- /.control-sidebar -->
 </div>
 <!-- ./wrapper -->
+<script>
+        // Función para obtener el saldo y actualizar la página
+        function obtenerSaldo() {
+    var xhr = new XMLHttpRequest();
 
+    // Cambia el método de POST a GET y agrega el usuario_id como parámetro en la URL
+    var usuario_id = <?php echo $usuario_id; ?>;
+    xhr.open("GET", "pages/forms/obtenersaldo.php?usuario_id=" + usuario_id, true);
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var response = JSON.parse(xhr.responseText);
+            var saldo = response.saldo;
+            document.getElementById("saldoMostrado").textContent = saldo;
+        }
+    };
+
+    // Elimina el envío de datos en el cuerpo de la solicitud
+    xhr.send();
+}
+
+// Llamar a la función obtenerSaldo cada 1000 milisegundos (1 segundo)
+setInterval(obtenerSaldo, 1000);
+    </script>
 <!-- jQuery -->
 <script src="../../plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->

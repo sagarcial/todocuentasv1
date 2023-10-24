@@ -1,4 +1,13 @@
 <?php
+session_start(); // Iniciar sesión
+
+if (session_status() == PHP_SESSION_ACTIVE && isset($_SESSION["usuario"])) {
+  // La sesión está activa y la variable de sesión "usuario" está definida, por lo que se permite el acceso a la página
+} else {
+  // La sesión no está activa o la variable de sesión "usuario" no está definida, por lo que se redirige a la página de inicio de sesión
+  echo "<script>alert('Sesion expirada'); window.history.back();</script>";
+  exit();
+}
     // Cambiar la configuración regional a español
     setlocale(LC_TIME, 'es_ES.UTF-8');
 

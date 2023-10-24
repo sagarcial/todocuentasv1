@@ -1,3 +1,5 @@
+
+
 <head>
 <link rel="stylesheet" href="../../dist/css/csspersn.css">
 </head>
@@ -14,21 +16,16 @@
           <img src="../../dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">Alexander Pierce</a>
+          <a href="#" class="d-block"> <?php
+          $nombrecapital = ucfirst($_SESSION['nombre']);
+          $apellidocapital = ucfirst($_SESSION['apellido']);
+    echo '' . $nombrecapital.' ' . $apellidocapital;
+    ?></a>
         </div>
       </div>
 
       <!-- SidebarSearch Form -->
-      <div class="form-inline">
-        <div class="input-group" data-widget="sidebar-search">
-          <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-          <div class="input-group-append">
-            <button class="btn btn-sidebar">
-              <i class="fas fa-search fa-fw"></i>
-            </button>
-          </div>
-        </div>
-      </div>
+    
 
       <!-- Sidebar Menu -->
       <nav class="mt-2">
@@ -82,6 +79,14 @@
               <i class="fa fa-tasks"></i>
               <p>
                 Manejo General de vendededores
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="cerrarsesion.php" class="nav-link">
+              <i class="fa fa-tasks"></i>
+              <p>
+                Cerrar Sesion
               </p>
             </a>
           </li>
